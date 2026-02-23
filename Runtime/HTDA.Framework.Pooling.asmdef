@@ -1,6 +1,6 @@
 {
-  "name": "HTDA.Framework.Template",
-  "rootNamespace": "HTDA.Framework.Template",
+  "name": "HTDA.Framework.Pooling",
+  "rootNamespace": "HTDA.Framework.Pooling",
   "references": [],
   "includePlatforms": [],
   "excludePlatforms": [],

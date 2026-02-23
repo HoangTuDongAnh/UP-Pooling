@@ -1,8 +1,8 @@
 {
-  "name": "HTDA.Framework.Template.Tests",
-  "rootNamespace": "HTDA.Framework.Template.Tests",
+  "name": "HTDA.Framework.Pooling.Tests",
+  "rootNamespace": "HTDA.Framework.Pooling.Tests",
   "references": [
-    "HTDA.Framework.Template"
+    "HTDA.Framework.Pooling"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

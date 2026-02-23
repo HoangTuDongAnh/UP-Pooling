@@ -1,32 +1,94 @@
-# HTDA Framework Template (UPM)
+# UP-Pooling
 
-This repository is a **Unity Package Manager (UPM) template** for creating new HTDA Framework modules.
+High-performance, extensible object pooling system for Unity.
 
-## Quick start
+UP-Pooling cung cấp hệ thống spawn/despawn tối ưu cho GameObject và
+Component, giảm Instantiate/Destroy, giảm GC và tối ưu hiệu năng cho
+gameplay.
 
-1. Copy this folder as a new repository (recommended repo name: `HTDA-Framework-<ModuleName>`).
-2. Run the wizard:
+------------------------------------------------------------------------
 
-```bash
-python Tools/setup_wizard.py
+## ✨ Features
+
+-   Generic ObjectPool`<T>`{=html} (O(1) active tracking)
+-   GameObjectPool & ComponentPool`<T>`{=html}
+-   PoolRegistry global manager
+-   IPoolable lifecycle hooks
+-   Configurable spawn/despawn order
+-   Prewarm, MaxSize, ExpandPolicy
+-   Optional PoolableRoot (limit scan subtree)
+-   Optional ManualPoolables (zero scan)
+
+------------------------------------------------------------------------
+
+## 🚀 Quick Start
+
+### 1️⃣ Spawn via PoolRegistry
+
+``` csharp
+var bullet = PoolRegistry.Spawn(bulletPrefab, position, rotation);
 ```
 
-3. The wizard will:
-- rename package id (com.htda.framework.<suffix>)
-- rename assemblies and namespaces (HTDA.Framework.<ModuleName>)
-- optionally remove Runtime or Editor parts based on package type
+### 2️⃣ Despawn
 
-## Conventions
+``` csharp
+bullet.GetComponent<PooledObject>().Despawn();
+```
 
-- Package id: com.htda.framework.<suffix> (e.g. core, editor.tools, patterns.pooling)
+------------------------------------------------------------------------
 
-- Assembly: HTDA.Framework.<ModuleName> and HTDA.Framework.<ModuleName>.Editor
+## 🧱 IPoolable
 
-- Namespace root: HTDA.Framework.<ModuleName>
+``` csharp
+public class Bullet : MonoBehaviour, IPoolable
+{
+    public void ResetState() { }
+    public void OnSpawned() { }
+    public void OnDespawned() { }
+}
+```
 
-## Notes
+------------------------------------------------------------------------
 
-- Keep Core packages small and stable.
+## ⚙ PoolOptions
 
-- Move optional utilities/patterns/extensions into separate modules.
+``` csharp
+var options = new PoolOptions(
+    prewarm: 20,
+    maxSize: 100,
+    expandPolicy: PoolExpandPolicy.Expand
+);
+```
 
+------------------------------------------------------------------------
+
+## 🔧 Advanced Optimizations
+
+### PoolableRoot
+
+Giới hạn scan IPoolable trong subtree cụ thể.
+
+### ManualPoolables
+
+Tự đăng ký IPoolable để tránh scan hoàn toàn.
+
+------------------------------------------------------------------------
+
+## 📌 Dependency
+
+Depends on: - UP-Core
+
+------------------------------------------------------------------------
+
+## 🎯 Intended Usage
+
+-   Bullet/VFX pooling
+-   Enemy spawn systems
+-   UI element recycling
+-   High-frequency gameplay objects
+
+------------------------------------------------------------------------
+
+## 📄 Version
+
+v1.0.0 -- Optimized O(1) pooling system
