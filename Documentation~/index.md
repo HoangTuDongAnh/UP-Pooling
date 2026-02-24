@@ -1,91 +1,35 @@
-# UP-Pooling -- Technical Documentation
+# UP-Pooling – Documentation
 
-## 1. Architecture Overview
+## 1. Mục tiêu
 
-UP-Pooling gồm 2 tầng:
+- Spawn/despawn ổn định, dễ dùng.
+- Giảm Instantiate/Destroy và GC.
 
-### Core Layer
+## 2. Expand policy
 
--   IPool`<T>`{=html}
--   ObjectPool`<T>`{=html}
--   PoolOptions
--   PoolExpandPolicy
+- Expand: tạo thêm instance nếu hết
+- Fail: trả null nếu hết
+- ReuseOldest: tái sử dụng object active lâu nhất (O(1))
 
-### Unity Layer
+## 3. IPoolable lifecycle order
 
--   GameObjectPool
--   ComponentPool`<T>`{=html}
--   PoolRegistry
--   PooledObject
--   IPoolable
--   UnityPoolBehaviour
+Mặc định (tuỳ cấu hình nếu bạn đã thêm):
+- Spawn: ResetState → SetActive(true) → OnSpawned
+- Despawn: OnDespawned → SetActive(false)
 
-------------------------------------------------------------------------
+## 4. PoolRegistry
 
-## 2. Performance Design
+- Tạo/lấy pool theo prefab key.
+- Khuyến nghị tạo pool sớm (prewarm) cho prefab spawn dày.
 
-### O(1) Active Tracking
+## 5. Optimization notes
 
-ObjectPool sử dụng:
+- Cache IPoolable[] ngay khi create instance.
+- Nếu prefab lớn:
+    - dùng `PoolableRoot` để giới hạn subtree scan
+    - hoặc `ManualPoolables` để zero scan
 
--   LinkedList`<T>`{=html} để giữ thứ tự active
--   Dictionary\<T, LinkedListNode`<T>`{=html}\> để remove O(1)
+## 6. Best practices
 
-Release và ReuseOldest đều O(1).
-
-------------------------------------------------------------------------
-
-## 3. Spawn Lifecycle (Default)
-
-Spawn order:
-
-ResetState → SetActive(true) → OnSpawned
-
-Despawn order:
-
-OnDespawned → SetActive(false)
-
-Có thể cấu hình qua UnityPoolBehaviour.
-
-------------------------------------------------------------------------
-
-## 4. PoolExpandPolicy
-
--   Expand: tạo thêm instance nếu hết
--   Fail: trả null
--   ReuseOldest: tái sử dụng object active lâu nhất
-
-------------------------------------------------------------------------
-
-## 5. Memory Strategy
-
--   Cache IPoolable\[\] khi tạo instance
--   Không scan mỗi spawn/despawn
--   Optional:
-    -   PoolableRoot → scan subtree
-    -   ManualPoolables → zero scan
-
-------------------------------------------------------------------------
-
-## 6. Best Practices
-
-✔ Prewarm nếu spawn nhiều\
-✔ Không dùng pool cho object tồn tại lâu\
-✔ Không dùng pooling cho prefab cực ít spawn
-
-------------------------------------------------------------------------
-
-## 7. Integration Suggestions
-
-UP-Events: - Publish SpawnedEvent / DespawnedEvent nếu cần
-
-UP-FSM: - State có thể spawn/despawn object
-
-UP-SceneFlow: - ClearAll() khi unload scene
-
-------------------------------------------------------------------------
-
-## 8. Version History
-
-v1.0.0 - O(1) pooling - Configurable spawn lifecycle - Manual & subtree
-poolable scan
+- Prewarm phù hợp để tránh spike.
+- Luôn Despawn qua `PooledObject`/pool thay vì Destroy.

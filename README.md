@@ -1,94 +1,38 @@
-# UP-Pooling
+# UP-Pooling (HTDA.Framework.Pooling)
 
-High-performance, extensible object pooling system for Unity.
+Hệ thống pooling tối ưu cho spawn/despawn, hạn chế Instantiate/Destroy.
 
-UP-Pooling cung cấp hệ thống spawn/despawn tối ưu cho GameObject và
-Component, giảm Instantiate/Destroy, giảm GC và tối ưu hiệu năng cho
-gameplay.
+## Features
 
-------------------------------------------------------------------------
+- Core: `ObjectPool<T>`, `IPool<T>`
+- Unity:
+    - `GameObjectPool` (theo prefab)
+    - `ComponentPool<T>`
+    - `PoolRegistry` (lấy pool theo prefab key)
+    - `PooledObject` (tag owner pool)
+- Hooks: `IPoolable` (`ResetState`, `OnSpawned`, `OnDespawned`)
+- Options: prewarm, max size, expand policy
+- Optimization: `PoolableRoot` / `ManualPoolables` (nếu bạn đã thêm)
 
-## ✨ Features
+## Quick start
 
--   Generic ObjectPool`<T>`{=html} (O(1) active tracking)
--   GameObjectPool & ComponentPool`<T>`{=html}
--   PoolRegistry global manager
--   IPoolable lifecycle hooks
--   Configurable spawn/despawn order
--   Prewarm, MaxSize, ExpandPolicy
--   Optional PoolableRoot (limit scan subtree)
--   Optional ManualPoolables (zero scan)
-
-------------------------------------------------------------------------
-
-## 🚀 Quick Start
-
-### 1️⃣ Spawn via PoolRegistry
-
-``` csharp
-var bullet = PoolRegistry.Spawn(bulletPrefab, position, rotation);
+```csharp
+var go = PoolRegistry.Spawn(bulletPrefab, position, rotation);
+go.GetComponent<PooledObject>().Despawn();
 ```
 
-### 2️⃣ Despawn
+## IPoolable
 
-``` csharp
-bullet.GetComponent<PooledObject>().Despawn();
-```
-
-------------------------------------------------------------------------
-
-## 🧱 IPoolable
-
-``` csharp
+```csharp
 public class Bullet : MonoBehaviour, IPoolable
 {
-    public void ResetState() { }
-    public void OnSpawned() { }
-    public void OnDespawned() { }
+    public void ResetState() {}
+    public void OnSpawned() {}
+    public void OnDespawned() {}
 }
 ```
 
-------------------------------------------------------------------------
+## Notes
 
-## ⚙ PoolOptions
-
-``` csharp
-var options = new PoolOptions(
-    prewarm: 20,
-    maxSize: 100,
-    expandPolicy: PoolExpandPolicy.Expand
-);
-```
-
-------------------------------------------------------------------------
-
-## 🔧 Advanced Optimizations
-
-### PoolableRoot
-
-Giới hạn scan IPoolable trong subtree cụ thể.
-
-### ManualPoolables
-
-Tự đăng ký IPoolable để tránh scan hoàn toàn.
-
-------------------------------------------------------------------------
-
-## 📌 Dependency
-
-Depends on: - UP-Core
-
-------------------------------------------------------------------------
-
-## 🎯 Intended Usage
-
--   Bullet/VFX pooling
--   Enemy spawn systems
--   UI element recycling
--   High-frequency gameplay objects
-
-------------------------------------------------------------------------
-
-## 📄 Version
-
-v1.0.0 -- Optimized O(1) pooling system
+- Pool phù hợp object spawn nhiều: bullet, vfx, damage text…
+- Không nên pool object sống rất lâu (menu root, main systems).
