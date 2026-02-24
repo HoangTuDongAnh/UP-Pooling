@@ -1,7 +1,7 @@
 {
   "name": "com.htda.framework.pooling",
   "version": "0.1.0",
-  "displayName": "HTDA Framework – Pooling",
+  "displayName": "HTDA Framework \u2013 Pooling",
   "description": "HTDA Framework module: Pooling",
   "unity": "2022.3",
   "author": {
@@ -17,5 +17,7 @@
   "documentationUrl": "https://github.com/HoangTuDongAnh/HTDA-Framework-Pooling",
   "changelogUrl": "https://github.com/HoangTuDongAnh/HTDA-Framework-Pooling/blob/main/CHANGELOG.md",
   "licensesUrl": "https://github.com/HoangTuDongAnh/HTDA-Framework-Pooling/blob/main/LICENSE.md",
-  "dependencies": {}
+  "dependencies": {
+    "com.htda.framework.core": "0.1.0"
+  }
 }
